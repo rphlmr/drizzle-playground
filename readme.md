@@ -1,5 +1,7 @@
 # Drizzle Playground
 
+![image](https://github.com/rphlmr/drizzle-playground/assets/20722140/1116ab6f-98aa-4e68-a066-b546d8b9de1f)
+
 Just a little repo to play around with drizzle.
 
 It includes all major drivers, ready to be used.
