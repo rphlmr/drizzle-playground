@@ -1,0 +1,29 @@
+{
+	"name": "drizzle-playground",
+	"version": "1.0.0",
+	"description": "A playground to run Drizzle scripts on docker databases",
+	"main": "src/index.ts",
+	"scripts": {
+		"start": "tsx src/index.ts"
+	},
+	"author": "@rphlmr",
+	"license": "ISC",
+	"dependencies": {
+		"@libsql/client": "^0.3.1",
+		"@neondatabase/serverless": "^0.6.0",
+		"@planetscale/database": "^1.11.0",
+		"better-sqlite3": "^8.5.1",
+		"dotenv": "^16.3.1",
+		"drizzle-orm": "^0.28.4-b0f0ac9",
+		"mysql2": "^3.6.0",
+		"pg": "^8.11.3",
+		"postgres": "^3.3.5"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.4",
+		"drizzle-kit": "^0.19.13",
+		"prettier": "^3.0.2",
+		"tsx": "^3.12.7",
+		"typescript": "^5.1.6"
+	}
+}
