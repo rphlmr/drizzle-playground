@@ -4,7 +4,11 @@
 	"description": "A playground to run Drizzle scripts on docker databases",
 	"main": "src/index.ts",
 	"scripts": {
-		"start": "tsx src/index.ts"
+		"start": "tsx src/index.ts",
+		"pg:push": "drizzle-kit push:pg --config drizzle.config.pg.ts",
+		"pg:studio": "drizzle-kit studio --config drizzle.config.pg.ts --host 127.0.0.1",
+		"mysql:push": "drizzle-kit push:mysql --config drizzle.config.mysql.ts",
+		"mysql:studio": "drizzle-kit studio --config drizzle.config.mysql.ts --host 127.0.0.1"
 	},
 	"author": "@rphlmr",
 	"license": "ISC",

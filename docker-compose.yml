@@ -1,0 +1,17 @@
+services:
+    db-mysql:
+        image: mysql:latest
+        container_name: db-mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: demo
+        ports:
+            - "3306:3306"
+    db-postgres:
+        image: postgres:latest
+        container_name: db-postgres
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: root
+        ports:
+            - "5432:5432"

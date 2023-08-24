@@ -11,7 +11,7 @@ import {
 export const countries = mysqlTable(
 	"countries",
 	{
-		id: serial("id").primaryKey(),
+		id: int("id").autoincrement().primaryKey(),
 		name: varchar("name", { length: 256 }),
 	},
 	(countries) => ({
