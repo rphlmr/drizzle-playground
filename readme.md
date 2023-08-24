@@ -4,7 +4,7 @@ Just a little repo to play around with drizzle.
 
 It includes all major drivers, ready to be used.
 
-Import and write your queries in `main` function in `index.ts`, then run `npm run start`.
+Import and write your queries in `main` function in `index.ts`, then run `(npm|pnpm|yarn) run start`.
 
 # How to
 
@@ -26,9 +26,9 @@ docker compose up
 
 ```bash
 # In a terminal, run
-npm run {dialect}:push
+(npm|pnpm|yarn) run {dialect}:push
 
-npm run pg:push
+(npm|pnpm|yarn) run pg:push
 ```
 
 ## Start Drizzle Studio
@@ -37,9 +37,9 @@ npm run pg:push
 
 ```bash
 # In a terminal, run
-npm run {dialect}:studio
+(npm|pnpm|yarn) run {dialect}:studio
 
-npm run pg:studio
+(npm|pnpm|yarn) run pg:studio
 ```
 
 # I am stuck, I have errors on push
