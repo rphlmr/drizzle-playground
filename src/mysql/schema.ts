@@ -1,8 +1,10 @@
+import { relations } from "drizzle-orm";
 import {
 	int,
 	mysqlEnum,
 	mysqlTable,
 	serial,
+	text,
 	uniqueIndex,
 	varchar,
 } from "drizzle-orm/mysql-core";
@@ -25,3 +27,22 @@ export const cities = mysqlTable("cities", {
 	countryId: int("country_id").references(() => countries.id),
 	popularity: mysqlEnum("popularity", ["unknown", "known", "popular"]),
 });
+
+export const users = mysqlTable("users", {
+	id: serial("id").primaryKey(),
+	name: text("name").notNull(),
+});
+
+export const usersRelations = relations(users, ({ many }) => ({
+	posts: many(posts),
+}));
+
+export const posts = mysqlTable("posts", {
+	id: serial("id").primaryKey(),
+	content: text("content").notNull(),
+	authorId: int("author_id").notNull(),
+});
+
+export const postsRelations = relations(posts, ({ one }) => ({
+	author: one(users, { fields: [posts.authorId], references: [users.id] }),
+}));

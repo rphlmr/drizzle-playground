@@ -8,7 +8,9 @@
 		"pg:push": "drizzle-kit push:pg --config drizzle.config.pg.ts",
 		"pg:studio": "drizzle-kit studio --config drizzle.config.pg.ts --host 127.0.0.1",
 		"mysql:push": "drizzle-kit push:mysql --config drizzle.config.mysql.ts",
-		"mysql:studio": "drizzle-kit studio --config drizzle.config.mysql.ts --host 127.0.0.1"
+		"mysql:studio": "drizzle-kit studio --config drizzle.config.mysql.ts --host 127.0.0.1",
+		"sqlite:push": "drizzle-kit push:sqlite --config drizzle.config.sqlite.ts",
+		"sqlite:studio": "drizzle-kit studio --config drizzle.config.sqlite.ts --host 127.0.0.1"
 	},
 	"author": "@rphlmr",
 	"license": "ISC",
