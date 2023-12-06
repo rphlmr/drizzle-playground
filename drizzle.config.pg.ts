@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import type { Config } from "drizzle-kit";
+// import type { Config } from "drizzle-kit";
 
 export default {
 	schema: "./src/pg/schema.ts",
@@ -10,4 +10,4 @@ export default {
 		connectionString: process.env.DATABASE_URL!,
 	},
 	verbose: true,
-} satisfies Config;
+};

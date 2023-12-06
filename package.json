@@ -5,7 +5,15 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"start": "tsx src/index.ts",
+		"pg:migration:generate": "drizzle-kit generate:pg --config drizzle.config.pg.ts",
+		"pg:migration:up": "drizzle-kit up:pg --config drizzle.config.pg.ts",
+		"pg:migration:check": "drizzle-kit up:pg --config drizzle.config.pg.ts",
+		"pg:migration:generate:custom": "drizzle-kit generate:pg --custom --config drizzle.config.pg.ts",
+		"pg:migration:drop": "drizzle-kit drop --config drizzle.config.pg.ts",
+		"pg:migration:deploy": "tsx src/deploy.ts",
 		"pg:push": "drizzle-kit push:pg --config drizzle.config.pg.ts",
+		"pg:introspect": "drizzle-kit introspect:pg --config drizzle.config.pg.ts",
+		"pg:generate": "drizzle-kit generate:pg --config drizzle.config.pg.ts",
 		"pg:studio": "drizzle-kit studio --config drizzle.config.pg.ts --host 127.0.0.1",
 		"mysql:push": "drizzle-kit push:mysql --config drizzle.config.mysql.ts",
 		"mysql:studio": "drizzle-kit studio --config drizzle.config.mysql.ts --host 127.0.0.1",
@@ -17,20 +25,21 @@
 	"dependencies": {
 		"@libsql/client": "^0.3.1",
 		"@neondatabase/serverless": "^0.6.0",
+		"@paralleldrive/cuid2": "^2.2.2",
 		"@planetscale/database": "^1.11.0",
 		"better-sqlite3": "^8.5.1",
 		"dotenv": "^16.3.1",
-		"drizzle-orm": "^0.28.5",
+		"drizzle-kit": "^0.20.4",
+		"drizzle-orm": "^0.29.0",
 		"drizzle-zod": "^0.5.1",
 		"mysql2": "^3.6.0",
 		"pg": "^8.11.3",
-		"postgres": "^3.3.5"
+		"postgres": "^3.4.3"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.4",
-		"drizzle-kit": "^0.19.13",
 		"prettier": "^3.0.2",
-		"tsx": "^3.12.7",
-		"typescript": "^5.1.6"
+		"tsx": "^3.14.0",
+		"typescript": "^5.3.2"
 	}
 }
