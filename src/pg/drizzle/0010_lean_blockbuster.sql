@@ -1,1 +1,0 @@
-ALTER TABLE "event" ALTER COLUMN "created_at" SET DEFAULT now();
