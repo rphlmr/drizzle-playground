@@ -169,6 +169,7 @@ export const tag = pgTable("tag", {
 export const tagsPivot = pgTable(
 	"tags_pivot",
 	{
+		id: uuid("id").notNull().defaultRandom(),
 		fileId: uuid("file_id")
 			.references(() => file.id)
 			.notNull(),

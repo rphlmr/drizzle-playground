@@ -267,7 +267,8 @@ async function main() {
 
 	const tagQuery = db
 		.select({
-			id: distinctOn(tagsPivot.tagId).mapWith(String).as("tag_id"),
+			id: distinctOn(tagsPivot.id).mapWith(String).as("tag_link_id"),
+			tagId: sql`${tagsPivot.tagId}`.mapWith(String).as("tag_id"),
 			fileId: sql`${tagsPivot.fileId}`
 				.mapWith(String)
 				.as("tagged_file_id"),
@@ -275,14 +276,14 @@ async function main() {
 		})
 		.from(tagsPivot)
 		.innerJoin(tag, eq(tag.id, tagsPivot.tagId))
-		.orderBy(tagsPivot.tagId)
+		.orderBy(tagsPivot.id)
 		.as("tag_query");
 
 	const tagsQuery = db
 		.select({
 			fileId: tagQuery.fileId,
 			tags: jsonAggBuildObject({
-				id: tagQuery.id,
+				id: tagQuery.tagId,
 				name: tagQuery.name,
 			}).as("tags"),
 		})
@@ -297,7 +298,7 @@ async function main() {
 			tags: tagsQuery.tags,
 		})
 		.from(file)
-		.where(inJsonArray(tagsQuery.tags, "id", tagIdFilter))
+		// .where(inJsonArray(tagsQuery.tags, "id", tagIdFilter))
 		.leftJoin(commentsQuery, eq(commentsQuery.fileId, file.id))
 		.leftJoin(tagsQuery, eq(tagsQuery.fileId, file.id));
 
