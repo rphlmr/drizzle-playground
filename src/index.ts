@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { db } from "./pg/postgres-js";
+// import { db } from "./pg/postgres-js";
 import {
 	InferColumnsDataTypes,
 	and,
@@ -17,6 +17,7 @@ import {
 	InferSelectModel,
 	AnyColumn,
 	SQL,
+	gt,
 } from "drizzle-orm";
 import {
 	AnyPgSelectQueryBuilder,
@@ -28,9 +29,11 @@ import {
 	alias,
 	uuid,
 } from "drizzle-orm/pg-core";
-import { comment, file, tag, tagsPivot, user } from "./pg/schema";
 import { count } from "./utils";
 import { SelectResultFields } from "drizzle-orm/query-builders/select.types";
+import { User } from "./pg/schema";
+import { db } from "./sqlite/better-sqlite3";
+import { posts } from "./sqlite/schema";
 
 // const pubUpvote = db
 // 	.select({
@@ -232,81 +235,83 @@ export function inJsonArray<T extends SQL.Aliased<unknown[]>>(
 	  )`;
 }
 
+// function wait(ms: number) {
+// 	return new Promise((resolve) => setTimeout(resolve, ms));
+// }
+
+// function makeUserQuery(userId: string) {
+// 	return db
+// 		.select()
+// 		.from(User)
+// 		.where(eq(User.id, userId))
+// 		.as("user_club_ids_query");
+// }
+
+// const userQuery = db
+// 	.select()
+// 	.from(User)
+// 	.where(eq(User.id, sql.placeholder("userId")))
+// 	.prepare("user_club_ids_query");
+
+// const userWithMoney = db.select().from(User).where(gt(User.balance, 0));
+
 async function main() {
-	const tagIdFilter = "330b7583-ce67-4ce0-aacc-8e34030f75f0";
-	const commentQuery = db
-		.select({
-			id: distinctOn(comment.id).mapWith(String).as("comment_id"),
-			fileId: sql`${comment.fileId}`.mapWith(String).as("file_id"),
-			text: comment.text,
-			commenter: {
-				id: sql`${user.id}`.mapWith(String).as("commenter_id"),
-				name: user.name,
-			},
-		})
-		.from(comment)
-		.innerJoin(user, eq(comment.commenterId, user.id))
-		.orderBy(comment.id)
-		.as("comment_query");
+	const allPosts = await db.select().from(posts);
 
-	const commentsQuery = db
-		.select({
-			fileId: commentQuery.fileId,
-			comments: jsonAggBuildObject({
-				id: commentQuery.id,
-				text: commentQuery.text,
-				commenter: jsonBuildObject({
-					id: commentQuery.commenter.id,
-					name: commentQuery.commenter.name,
-				}),
-			}).as("comments"),
-		})
-		.from(commentQuery)
-		.groupBy(commentQuery.fileId)
-		.as("comments_query");
+	console.log(allPosts);
 
-	const tagQuery = db
-		.select({
-			id: distinctOn(tagsPivot.id).mapWith(String).as("tag_link_id"),
-			tagId: sql`${tagsPivot.tagId}`.mapWith(String).as("tag_id"),
-			fileId: sql`${tagsPivot.fileId}`
-				.mapWith(String)
-				.as("tagged_file_id"),
-			name: tag.name,
-		})
-		.from(tagsPivot)
-		.innerJoin(tag, eq(tag.id, tagsPivot.tagId))
-		.orderBy(tagsPivot.id)
-		.as("tag_query");
+	// await db.insert(posts).values({
+	// 	authorId: 1,
+	// 	content: "Hello world",
+	// 	id: 1,
+	// });
 
-	const tagsQuery = db
-		.select({
-			fileId: tagQuery.fileId,
-			tags: jsonAggBuildObject({
-				id: tagQuery.tagId,
-				name: tagQuery.name,
-			}).as("tags"),
-		})
-		.from(tagQuery)
-		.groupBy(tagQuery.fileId)
-		.as("tags_query");
+	await db
+		.update(posts)
+		.set({ content: "Hello world 2" })
+		.where(eq(posts.id, 1));
 
-	const result = await db
-		.select({
-			...getTableColumns(file),
-			comments: commentsQuery.comments,
-			tags: tagsQuery.tags,
-		})
-		.from(file)
-		// .where(inJsonArray(tagsQuery.tags, "id", tagIdFilter))
-		.leftJoin(commentsQuery, eq(commentsQuery.fileId, file.id))
-		.leftJoin(tagsQuery, eq(tagsQuery.fileId, file.id));
+	// const userId = "ea8dfc50-9ed4-4acc-838b-1f6556973d24";
 
-	console.log(JSON.stringify(result, null, 2));
+	// const result = await db.transaction(
+	// 	async (tx) => {
+	// 		console.log("start");
+
+	// 		const [user] = await tx.select().from(makeUserQuery(userId));
+
+	// 		console.log("user", user);
+
+	// 		console.log("concurrent write");
+	// 		await db
+	// 			.update(User)
+	// 			.set({ balance: 0 })
+	// 			.where(eq(User.id, userId));
+
+	// 		// await wait(10_000);
+
+	// 		console.log("updating");
+
+	// 		await tx
+	// 			.update(User)
+	// 			.set({ balance: sql`${User.balance} + 100` })
+	// 			.where(eq(User.id, userId))
+	// 			.returning();
+
+	// 		// throw new Error("rollback");
+	// 	},
+	// 	{
+	// 		isolationLevel: "serializable",
+	// 	},
+	// );
+
+	// console.log(JSON.stringify(result, null, 2));
 }
 
 main()
 	.then(() => {
 		process.exit(0);
 	})
-	.catch(console.error);
+	.catch((e) => {
+		console.error(e);
+		process.exit(1);
+	});

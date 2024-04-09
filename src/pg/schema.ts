@@ -1,5 +1,5 @@
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, relations, sql } from "drizzle-orm";
 import {
 	AnyPgColumn,
 	bigserial,
@@ -15,6 +15,7 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
 
 // export const user = pgTable("user", {
 // 	id: uuid("id").primaryKey().defaultRandom(),
@@ -151,44 +152,130 @@ import {
 // 		.notNull(),
 // });
 
-export const user = pgTable("user", {
+export const User = pgTable("user", {
 	id: uuid("id").primaryKey().defaultRandom(),
 	name: text("name").notNull(),
+	balance: integer("balance").notNull().default(0),
+	updatedAt: timestamp("updated_at", {
+		mode: "string",
+		precision: 3,
+	}).defaultNow(),
 });
 
-export const file = pgTable("file", {
+const insertSchema = createInsertSchema(User);
+
+export type NewUser = typeof User.$inferInsert;
+export type NewUser2 = InferInsertModel<typeof User>;
+
+// export const file = pgTable("file", {
+// 	id: uuid("id").primaryKey().defaultRandom(),
+// 	name: text("name").notNull(),
+// });
+
+// export const tag = pgTable("tag", {
+// 	id: uuid("id").primaryKey().defaultRandom(),
+// 	name: text("name").notNull(),
+// });
+
+// export const tagsPivot = pgTable(
+// 	"tags_pivot",
+// 	{
+// 		id: uuid("id").notNull().defaultRandom(),
+// 		fileId: uuid("file_id")
+// 			.references(() => file.id)
+// 			.notNull(),
+// 		tagId: uuid("tag_id")
+// 			.references(() => tag.id)
+// 			.notNull(),
+// 	},
+// 	(t) => ({
+// 		cpk: primaryKey({ columns: [t.fileId, t.tagId] }),
+// 	}),
+// );
+
+// export const comment = pgTable("comment", {
+// 	id: uuid("id").primaryKey().defaultRandom(),
+// 	commenterId: uuid("commenter_id")
+// 		.references(() => user.id)
+// 		.notNull(),
+// 	fileId: uuid("file_id")
+// 		.references(() => file.id)
+// 		.notNull(),
+// 	text: text("text").notNull(),
+// });
+
+/* -------------------------------------------------------------------------- */
+/*                                 Discussion;                                */
+/* -------------------------------------------------------------------------- */
+
+export const Discussion = pgTable("discussion", {
 	id: uuid("id").primaryKey().defaultRandom(),
-	name: text("name").notNull(),
+	title: text("title"),
+	createdAt: timestamp("created_at", {
+		mode: "string",
+		precision: 3,
+	})
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updated_at", {
+		mode: "string",
+		precision: 3,
+	})
+		.notNull()
+		.defaultNow(),
 });
 
-export const tag = pgTable("tag", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	name: text("name").notNull(),
-});
+/* ------------------------- DiscussionParticipant; ------------------------- */
 
-export const tagsPivot = pgTable(
-	"tags_pivot",
+const discussionParticipantRoles = ["admin"] as const;
+
+export const DiscussionParticipant = pgTable(
+	"discussion_participant",
 	{
-		id: uuid("id").notNull().defaultRandom(),
-		fileId: uuid("file_id")
-			.references(() => file.id)
-			.notNull(),
-		tagId: uuid("tag_id")
-			.references(() => tag.id)
-			.notNull(),
+		userId: uuid("user_id")
+			.notNull()
+			.references(() => User.id, { onDelete: "cascade" }),
+		discussionId: uuid("discussion_id")
+			.notNull()
+			.references(() => Discussion.id, { onDelete: "cascade" }),
+		role: text("role", { enum: discussionParticipantRoles }),
+		joinedAt: timestamp("joined_at", {
+			mode: "string",
+			precision: 3,
+		})
+			.notNull()
+			.defaultNow(),
+		lastMessageReadAt: timestamp("last_message_read_at", {
+			mode: "string",
+			precision: 3,
+		}),
 	},
 	(t) => ({
-		cpk: primaryKey({ columns: [t.fileId, t.tagId] }),
+		cpk: primaryKey({ columns: [t.userId, t.discussionId] }),
 	}),
 );
 
-export const comment = pgTable("comment", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	commenterId: uuid("commenter_id")
-		.references(() => user.id)
-		.notNull(),
-	fileId: uuid("file_id")
-		.references(() => file.id)
-		.notNull(),
+/* --------------------------- DiscussionMessage; --------------------------- */
+
+export const DiscussionMessage = pgTable("discussion_message", {
+	id: bigserial("id", { mode: "number" }).primaryKey(),
+	userId: uuid("user_id").references(() => User.id, { onDelete: "set null" }),
+	discussionId: uuid("discussion_id")
+		.notNull()
+		.references(() => Discussion.id, { onDelete: "cascade" }),
 	text: text("text").notNull(),
+	createdAt: timestamp("created_at", {
+		mode: "string",
+		precision: 3,
+	})
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp("updated_at", {
+		mode: "string",
+		precision: 3,
+	}),
+	deletedAt: timestamp("deleted_at", {
+		mode: "string",
+		precision: 3,
+	}),
 });
