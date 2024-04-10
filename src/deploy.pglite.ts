@@ -1,19 +1,14 @@
-/* eslint-disable no-console */
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/pglite";
+import { migrate } from "drizzle-orm/pglite/migrator";
+import { client } from "./pg/pglite";
 
 async function runMigrate() {
 	if (!process.env.DATABASE_URL) {
 		throw new Error("DATABASE_URL is not set");
 	}
 
-	const migrationsClient = postgres(process.env.DATABASE_URL, {
-		max: 1,
-	});
-
-	const db = drizzle(migrationsClient, { logger: true });
+	const db = drizzle(client, { logger: true });
 
 	console.log("⏳ Running migrations...");
 
@@ -24,8 +19,6 @@ async function runMigrate() {
 	const end = Date.now();
 
 	console.log(`✅ Migration end & took ${end - start}ms`);
-
-	await migrationsClient.end();
 
 	process.exit(0);
 }

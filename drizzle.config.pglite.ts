@@ -1,5 +1,4 @@
 import "dotenv/config";
-
 import type { Config } from "drizzle-kit";
 
 export default {
@@ -7,7 +6,10 @@ export default {
 	out: "./src/pg/drizzle",
 	driver: "pg",
 	dbCredentials: {
-		connectionString: process.env.DATABASE_URL!,
+		host: "localhost",
+		database: "postgres",
+		port: 5432,
+		user: "postgres",
 	},
 	verbose: true,
 } satisfies Config;
