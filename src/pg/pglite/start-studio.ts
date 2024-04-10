@@ -34,7 +34,7 @@ chokidar
 	});
 
 function startPGLiteServer() {
-	return exec("npm run pglite:server", (error, stdout, stderr) => {
+	return exec("npm run pglite:start:server", (error, stdout, stderr) => {
 		if (stdout) {
 			console.log(`pglite-server: ${stdout}`);
 		}
@@ -42,7 +42,7 @@ function startPGLiteServer() {
 }
 
 function startPGLiteStudio() {
-	return exec("npm run pglite:studio", (error, stdout, stderr) => {
+	return exec("npm run pglite:start:studio", (error, stdout, stderr) => {
 		if (stdout) {
 			console.log(`drizzle-studio: ${stdout}`);
 		}
