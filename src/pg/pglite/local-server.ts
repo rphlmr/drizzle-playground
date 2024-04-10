@@ -1,15 +1,10 @@
-import { client } from "./index";
 import { createServer } from "pglite-server";
 
-async function run() {
-	await client.waitReady;
+import { client } from "./index";
 
-	const pgServer = createServer(client);
-	const PORT = 5432;
+const pgServer = createServer(client, { keepAlive: true });
+const PORT = 5432;
 
-	pgServer.listen(PORT, () => {
-		console.log(`Server bound to port ${PORT}`);
-	});
-}
-
-void run();
+pgServer.listen(PORT, () => {
+	console.log(`PGLite Server bound to port ${PORT}`);
+});
