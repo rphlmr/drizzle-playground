@@ -1,10 +1,15 @@
 import "dotenv/config";
-import { db } from "./pg/postgres-js";
-import { cities } from "./pg/schema";
+import { db } from "./pg/pglite";
+import { users } from "./pg/schema";
+import { faker } from "@faker-js/faker";
 
 async function main() {
 	// Write your code here
-	console.log(db.select().from(cities).toSQL());
+	await db.insert(users).values({
+		name: faker.person.fullName(),
+	});
+
+	console.log(await db.select().from(users));
 }
 
 main()

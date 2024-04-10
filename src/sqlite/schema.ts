@@ -36,9 +36,15 @@ export const posts = sqliteTable("posts", {
 	id: integer("id").primaryKey(),
 	content: text("content").notNull(),
 	authorId: integer("author_id").notNull(),
-	timestamp: integer("timestamp").default(sql`CURRENT_TIMESTAMP`),
+	updatedAt: integer("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const postsRelations = relations(posts, ({ one }) => ({
 	author: one(users, { fields: [posts.authorId], references: [users.id] }),
 }));
+
+export const cities2 = sqliteTable("cities2", {
+	id: integer("id").primaryKey(),
+	name: text("name"),
+	countryId: integer("country_id").references(() => countries.id),
+});
